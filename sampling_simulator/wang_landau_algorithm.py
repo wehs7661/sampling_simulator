@@ -9,8 +9,8 @@
 ####################################################################
 """
 This module provide methods to mock the sampling in the alchemical space by the Wang-Landau algorithm.
-The sampling in the configurational space is ignored, i.e., ΔU is assumed to be always 0. 
-kT is set to 1. 
+The sampling in the configurational space is ignored, i.e., ΔU is assumed to be always 0.
+kT is set to 1.
 """
 import copy
 import random
@@ -68,7 +68,7 @@ class mock_WL_algorithm:
         rand = random.random()
         if rand < p_acc:
             # print('Move accepted!')
-            self.state =state_new
+            self.state = state_new
             self.g[state_new] -= self.wl_delta
             self.f_current[state_new] += self.wl_delta
             self.hist[state_new] += 1
@@ -123,4 +123,3 @@ class mock_WL_algorithm:
         plt.ylabel(label)
         plt.grid()
         plt.savefig(fname, dpi=600)
-    

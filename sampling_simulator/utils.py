@@ -10,6 +10,8 @@
 """
 This modules provides utility functions for other modules.
 """
+import numpy as np
+
 
 def free2prob(f):
     """
@@ -18,8 +20,9 @@ def free2prob(f):
     f -= f.max()  # just to prevent overflow
     p = np.exp(-f)
     p /= p.sum()
-    
+
     return p
+
 
 def calc_rmse(data, ref):
     """
