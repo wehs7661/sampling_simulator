@@ -1,0 +1,32 @@
+version: 2.1
+
+jobs:
+  test:
+    machine:
+      # Note that ubuntu with versions later than 2022 triggers an interative prompt that gets CI stuck
+      image: ubuntu-2004:202107-02
+    envionment:
+      PYTHON_VERSION: "3.8"
+    steps:
+      - checkout
+      - run:
+          name: Install nbconvert for testing notebooks
+          command: |
+            pip install jupyter nbconvert
+      - run:
+          name: Install the sampling_simulator package
+          command: |
+            pip install .
+      - run:
+          name: Test notebooks
+          command: |
+            for notebook in *.ipynb; do
+              jupyter nbconvert --to script "$notebook"
+              python "${notebook%.ipynb}.py"
+            done
+
+workflows:
+  version: 2
+  test-workflow:
+    jobs:
+      - test
