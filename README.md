@@ -1,11 +1,11 @@
 sampling_simulator
 ==============================
 [//]: # (Badges)
-[![GitHub Actions Build Status](https://github.com/REPLACE_WITH_OWNER_ACCOUNT/sampling_simulator/workflows/CI/badge.svg)](https://github.com/REPLACE_WITH_OWNER_ACCOUNT/sampling_simulator/actions?query=workflow%3ACI)
-[![codecov](https://codecov.io/gh/REPLACE_WITH_OWNER_ACCOUNT/sampling_simulator/branch/main/graph/badge.svg)](https://codecov.io/gh/REPLACE_WITH_OWNER_ACCOUNT/sampling_simulator/branch/main)
+[![codecov](https://codecov.io/gh/wehs7661/sampling_simulator/branch/main/graph/badge.svg)](https://codecov.io/gh/wehs7661/sampling_simulator/branch/main)
+[![GitHub Actions Lint Status](https://github.com/wehs7661/sampling_simulator/actions/workflows/lint.yaml/badge.svg)](https://github.com/wehs7661/sampling_simulator/actions/workflows/lint.yaml)
 
 
-A python package for simulating the sampling behaviors of enhanced sampling simulations
+A python package for simulating sampling behaviors of enhanced sampling simulations.
 
 ### Copyright
 
