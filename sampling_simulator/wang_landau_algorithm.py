@@ -17,7 +17,7 @@ import random
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
-from sampling_simulator import utils
+from sampling_simulator.utils import utils
 
 
 class WL_Simulator:
@@ -34,6 +34,27 @@ class WL_Simulator:
         self.equil = False
         self.equil_time = None
         self.dg = []  # the weight difference between the first and last states
+        self.required_args = [
+            'n_steps',
+            'wl_delta',
+            'wl_delta_cutoff',
+            'wl_ratio',
+            'wl_scale',
+        ]
+        self.optional_args = {'verbose': False}
+        self.check_params_dict()
+
+    def check_params_dict(self):
+        """
+        Check if the required parameters are in the params_dict.
+        """
+        for arg in self.required_args:
+            if not hasattr(self, arg):
+                raise ParameterError(f'Required paramaeter {arg} is missing from the params_dict.')
+
+        for arg in self.optional_args:
+            if not hasattr(self, arg):
+                setattr(self, arg, optional_args[arg])
 
     def check_flatness(self):
         """

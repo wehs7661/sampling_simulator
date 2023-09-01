@@ -5,14 +5,14 @@ jobs:
     machine:
       # Note that ubuntu with versions later than 2022 triggers an interative prompt that gets CI stuck
       image: ubuntu-2004:202107-02
-    environment:
+    envionment:
       PYTHON_VERSION: "3.8"
     steps:
       - checkout
       - run:
           name: Install nbconvert for testing notebooks
           command: |
-            pip install jupyter nbconvert
+            pip install ipywidgets==8.1.0 jupyter nbconvert
       - run:
           name: Install the sampling_simulator package
           command: |
