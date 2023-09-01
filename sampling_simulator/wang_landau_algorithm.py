@@ -20,7 +20,7 @@ from matplotlib.ticker import MaxNLocator
 from sampling_simulator import utils
 
 
-class mock_WL_algorithm:
+class WL_Simulator:
     def __init__(self, params_dict, f_true):
         for attr in params_dict:
             setattr(self, attr, params_dict[attr])
@@ -42,10 +42,12 @@ class mock_WL_algorithm:
         N_ratio = self.hist / self.hist.mean()
         flat_bool = np.all(N_ratio > self.wl_ratio) and np.all(1/N_ratio > self.wl_ratio)
         if flat_bool:
-            print('  Scaling down the Wang-Landau incrmentor and resetting the histogram ...')
+            if self.verbose:
+                print('  Scaling down the Wang-Landau incrmentor and resetting the histogram ...')
             self.wl_delta *= self.wl_scale
             self.hist = np.zeros(self.n_states)
-            print(f'  New Wang-Landau incrmentor: {self.wl_delta:.6f}')
+            if self.verbose:
+                print(f'  New Wang-Landau incrmentor: {self.wl_delta:.6f}')
 
     def calc_prob_acc(self, state_new):
         """
@@ -67,13 +69,15 @@ class mock_WL_algorithm:
         p_acc = self.calc_prob_acc(state_new)
         rand = random.random()
         if rand < p_acc:
-            # print('Move accepted!')
+            if self.verbose:
+                print('Move accepted!')
             self.state = state_new
             self.g[state_new] -= self.wl_delta
             self.f_current[state_new] += self.wl_delta
             self.hist[state_new] += 1
         else:
-            # print('Move rejected!')
+            if self.verbose:
+                print('Move rejected!')
             self.g[self.state] -= self.wl_delta
             self.f_current[self.state] += self.wl_delta
             self.hist[self.state] += 1
@@ -82,11 +86,13 @@ class mock_WL_algorithm:
 
     def run(self):
         for i in range(self.n_steps):
-            # print(f'Step {i + 1}: ', end='')
+            if self.verbose:
+                print(f'Step {i + 1}: ', end='')
             self.traj.append(self.state)
             p_current = utils.free2prob(self.f_current)
             state_new = random.choices(range(self.n_states), weights=p_current, k=1)[0]
-            # print(f'Attempting to move from state {self.state} to state {state_new} ... ', end='')
+            if self.verbose:
+                print(f'Attempting to move from state {self.state} to state {state_new} ... ', end='')
             self.update(state_new)
             self.dg.append(self.g[-1] - self.g[0])
             if not self.equil:
@@ -94,7 +100,8 @@ class mock_WL_algorithm:
             if self.wl_delta < self.wl_delta_cutoff and self.equil is False:
                 self.equil = True
                 self.equil_time = i
-                # print('  The alchemical weights have been equilibrated!')
+                if self.verbose:
+                    print('  The alchemical weights have been equilibrated!')
 
     def plot_hist(self):
         """
