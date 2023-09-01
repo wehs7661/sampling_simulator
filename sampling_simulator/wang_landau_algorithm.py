@@ -8,7 +8,7 @@
 #                                                                  #
 ####################################################################
 """
-This script mocks the sampling in the alchemical space by the Wang-Landau algorithm.
+This module provide methods to mock the sampling in the alchemical space by the Wang-Landau algorithm.
 The sampling in the configurational space is ignored, i.e., ΔU is assumed to be always 0. 
 kT is set to 1. 
 """
@@ -17,23 +17,8 @@ import random
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
+from sampling_simulator import utils
 
-
-def free2prob(f):
-    """
-    Convert a free energy profile to probabilities of all states.
-    """
-    f -= f.max()  # just to prevent overflow
-    p = np.exp(-f)
-    p /= p.sum()
-    
-    return p
-
-def calc_rmse(data, ref):
-    """
-    Calculate the root-mean-square error (RMSE) between the data and the reference.
-    """
-    return np.sqrt(((data - ref) ** 2).mean())
 
 class mock_WL_algorithm:
     def __init__(self, params_dict, f_true):
@@ -99,7 +84,7 @@ class mock_WL_algorithm:
         for i in range(self.n_steps):
             # print(f'Step {i + 1}: ', end='')
             self.traj.append(self.state)
-            p_current = free2prob(self.f_current)
+            p_current = utils.free2prob(self.f_current)
             state_new = random.choices(range(self.n_states), weights=p_current, k=1)[0]
             # print(f'Attempting to move from state {self.state} to state {state_new} ... ', end='')
             self.update(state_new)
