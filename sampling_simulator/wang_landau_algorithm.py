@@ -127,7 +127,7 @@ class WL_Simulator:
                 if self.verbose:
                     print('  The alchemical weights have been equilibrated!')
 
-    def plot_hist(self):
+    def plot_hist(self, fname=None):
         """
         Plot the histogram counts of all states.
         """
@@ -140,10 +140,11 @@ class WL_Simulator:
         plt.grid()
         ax = plt.gca()
         ax.xaxis.set_major_locator(MaxNLocator(integer=True))
-        plt.savefig('hist.png', dpi=600)
+        if fname is not None:
+            plt.savefig(fname, dpi=600)
 
     @staticmethod
-    def plot_timeseries(var, label, fname):
+    def plot_timeseries(var, label, fname=None):
         t = np.arange(len(var))
         plt.figure()
         if len(var) > 10000:
@@ -153,4 +154,5 @@ class WL_Simulator:
         plt.xlabel('Step')
         plt.ylabel(label)
         plt.grid()
-        plt.savefig(fname, dpi=600)
+        if fname is not None:
+            plt.savefig(fname, dpi=600)

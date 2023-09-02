@@ -10,6 +10,7 @@
 """
 This modules provides utility functions for other modules.
 """
+import copy
 import numpy as np
 
 
@@ -17,8 +18,9 @@ def free2prob(f):
     """
     Convert a free energy profile to probabilities of all states.
     """
-    f -= f.max()  # just to prevent overflow
-    p = np.exp(-f)
+    f_ = copy.deepcopy(f)
+    f_ -= f_.max()  # just to prevent overflow
+    p = np.exp(-f_)
     p /= p.sum()
 
     return p
