@@ -18,6 +18,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 from sampling_simulator.utils import utils
+from sampling_simulator.utils.exceptions import ParameterError
 
 
 class WL_Simulator:
@@ -33,6 +34,7 @@ class WL_Simulator:
         self.traj = []  # state-space trajectory
         self.equil = False
         self.equil_time = None
+        self.g_equil = None
         self.dg = []  # the weight difference between the first and last states
         self.required_args = [
             'n_steps',
@@ -54,7 +56,7 @@ class WL_Simulator:
 
         for arg in self.optional_args:
             if not hasattr(self, arg):
-                setattr(self, arg, optional_args[arg])
+                setattr(self, arg, self.optional_args[arg])
 
     def check_flatness(self):
         """
@@ -121,6 +123,7 @@ class WL_Simulator:
             if self.wl_delta < self.wl_delta_cutoff and self.equil is False:
                 self.equil = True
                 self.equil_time = i
+                self.g_equil = copy.deepcopy(self.g)
                 if self.verbose:
                     print('  The alchemical weights have been equilibrated!')
 

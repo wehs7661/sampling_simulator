@@ -5,7 +5,7 @@ jobs:
     machine:
       # Note that ubuntu with versions later than 2022 triggers an interative prompt that gets CI stuck
       image: ubuntu-2004:202107-02
-    envionment:
+    environment:
       PYTHON_VERSION: "3.8"
     steps:
       - checkout
