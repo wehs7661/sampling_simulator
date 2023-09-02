@@ -124,8 +124,8 @@ class WL_Simulator:
                 self.equil = True
                 self.equil_time = i
                 self.g_equil = copy.deepcopy(self.g)
-                if self.verbose:
-                    print('  The alchemical weights have been equilibrated!')
+                if self.verbose is True:
+                    print(f'  The alchemical weights have been equilibrated!')
 
     def plot_hist(self, fname=None):
         """

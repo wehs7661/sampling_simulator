@@ -40,25 +40,33 @@ class EnsembleEXE(WL_Simulator):
             print(section_title)
             print('=' * len(section_title))
 
+            print('Current alchemical weights:')
             for j in range(self.n_sim):
                 self.simulators[j].run()
                 self.simulators[j].f_current = self.simulators[j].f_true - self.simulators[j].g
+                print(f'  States {j * self.s} to {j * self.s + self.n_sub - 1}: {np.round(self.simulators[j].g, decimals=3).tolist()}')  # noqa: E501
 
             # Update some attributes
             self.equil_all = [self.simulators[i].equil for i in range(self.n_sim)]
-            self.equil_time_all = [self.simulators[i].equil_time if self.simulators[i].equil is True else None for i in range(self.n_sim)]  # noqa: E501
+            self.equil_time_all = [self.simulators[k].equil_time + i * self.n_steps if self.simulators[k].equil is True else None for k in range(self.n_sim)]  # noqa: E501
             if self.equil_all.count(True) == self.n_sim:
-                print('The alchemical weights have been equilibrated in all replicas!')
+                print('\nThe alchemical weights have been equilibrated in all replicas!')
+                for j in range(self.n_sim):
+                    print(f'  Equilibration time of states {j * self.s} to {j * self.s + self.n_sub - 1}: {self.equil_time_all[j]} steps')
                 break
 
             self.wl_delta_all = [self.simulators[i].wl_delta for i in range(self.n_sim)]
-            print(f'Final Wang-Landau incrementors: {np.round(self.wl_delta_all, decimals=6).tolist()}')
+            print(f'\nFinal Wang-Landau incrementors: {np.round(self.wl_delta_all, decimals=6).tolist()}')
 
             if self.w_combine is True:
-                print('Performing weight combination ...')
+                print('\nPerforming weight combination ...')
                 weights_modified, g_vec = self.combine_weights()
                 for j in range(self.n_sim):
                     self.simulators[j].g = weights_modified[j]
+                    self.simulators[j].f_current = self.simulators[j].f_true - self.simulators[j].g
+        
+        # Calculate RMSE for the whole-range alchemical weights
+
 
     def combine_weights(self):
         weights = [self.simulators[i].g for i in range(self.n_sim)]
@@ -75,7 +83,7 @@ class EnsembleEXE(WL_Simulator):
                 if i in self.state_ranges[j] and i + 1 in self.state_ranges[j]:
                     idx = self.state_ranges[j].index(i)
                     dg_list.append(dg_adjacent[j][idx])
-                dg_vec.append(np.mean(dg_list))
+            dg_vec.append(np.mean(dg_list))
         dg_vec.insert(0, 0)
         g_vec = np.array([np.sum(dg_vec[:(i + 1)]) for i in range(len(dg_vec))])
 

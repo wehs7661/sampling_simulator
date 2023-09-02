@@ -12,7 +12,8 @@ jobs:
       - run:
           name: Install nbconvert for testing notebooks
           command: |
-            pip install jupyter nbconvert==5.6.1
+            pip install --upgrade pip
+            pip install jupyter nbconvert
       - run:
           name: Install the sampling_simulator package
           command: |
