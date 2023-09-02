@@ -12,7 +12,7 @@ jobs:
       - run:
           name: Install nbconvert for testing notebooks
           command: |
-            pip install ipywidgets==8.1.0 jupyter nbconvert
+            pip install ipywidgets==7.8.0 jupyter nbconvert
       - run:
           name: Install the sampling_simulator package
           command: |
