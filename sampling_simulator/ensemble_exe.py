@@ -21,6 +21,7 @@ class EnsembleEXE(WL_Simulator):
         self.params_dict = params_dict
         self.required_args.extend(['n_sim', 'n_iters', 's'])
         self.optional_args['w_combine'] = False
+        self.optional_args['hist_correction'] = False
         self.check_params_dict()
 
         # Some EEXE-specific parameters
@@ -58,8 +59,8 @@ class EnsembleEXE(WL_Simulator):
                 break
 
             self.wl_delta_all = [self.simulators[i].wl_delta for i in range(self.n_sim)]
-            if self.verbose:
-                print(f'\nFinal Wang-Landau incrementors: {np.round(self.wl_delta_all, decimals=6).tolist()}')
+            # if self.verbose:
+            print(f'\nFinal Wang-Landau incrementors: {np.round(self.wl_delta_all, decimals=6).tolist()}')
 
             if self.w_combine is True:
                 if self.verbose:
@@ -114,5 +115,15 @@ class EnsembleEXE(WL_Simulator):
         for i in range(len(w)):
             if self.verbose:
                 print(f'      States {i * self.s} to {i * self.s + self.n_sub - 1}: {w[i]}')
+
+        if self.hist_correction is True:
+            # N' = N * exp(-(g' - g)), N' has to be an integer
+            print('Performing histogram correction ...')
+            for i in range(self.n_sim):
+                # print('1: ', -(weights_modified[i] - weights[i]))
+                print('2:, ', np.exp(-(weights_modified[i] - weights[i])))
+                print(f'  Original histogram of states {i * self.s} to {i * self.s + self.n_sub - 1}: {self.simulators[i].hist.tolist()}')  # noqa: E501
+                self.simulators[i].hist = (self.simulators[i].hist * np.exp(-(weights_modified[i] - weights[i]))).astype(int)  # noqa: E501
+                print(f'  Corrected histogram of states {i * self.s} to {i * self.s + self.n_sub - 1}: {self.simulators[i].hist.tolist()}\n')  # noqa: E501
 
         return weights_modified, g_vec

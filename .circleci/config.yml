@@ -22,7 +22,7 @@ jobs:
       - run:
           name: Test notebooks
           command: |
-            for notebook in *.ipynb; do
+            for notebook in examples/*.ipynb; do
               jupyter nbconvert --to notebook --execute --inplace "$notebook"
               if [ $? -ne 0 ]; then
                 echo "Error in $notebook"
