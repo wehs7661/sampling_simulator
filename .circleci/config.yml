@@ -1,16 +1,17 @@
 version: 2.1
 
+executors:
+  python-executor:
+    docker:
+      - image: python:3.8
+
 jobs:
   test:
-    machine:
-      # Note that ubuntu with versions later than 2022 triggers an interative prompt that gets CI stuck
-      image: ubuntu-2004:202107-02
-    environment:
-      PYTHON_VERSION: "3.8"
+    executor: python-executor
     steps:
       - checkout
       - run:
-          name: Install nbconvert for testing notebooks
+          name: Install runipy for testing notebooks
           command: |
             pip install --upgrade pip
             pip install runipy
