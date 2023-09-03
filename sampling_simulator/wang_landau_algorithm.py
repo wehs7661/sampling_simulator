@@ -125,13 +125,12 @@ class WL_Simulator:
                 self.equil_time = i
                 self.g_equil = copy.deepcopy(self.g)
                 if self.verbose is True:
-                    print(f'  The alchemical weights have been equilibrated!')
+                    print('  The alchemical weights have been equilibrated!')
 
     def plot_hist(self, fname=None):
         """
         Plot the histogram counts of all states.
         """
-        plt.figure()
         bin_centers = np.arange(self.n_states)
         bin_width = bin_centers[1] - bin_centers[0]
         plt.bar(bin_centers, self.hist, width=bin_width, align='center', alpha=0.5, edgecolor='black')
@@ -146,7 +145,6 @@ class WL_Simulator:
     @staticmethod
     def plot_timeseries(var, label, fname=None):
         t = np.arange(len(var))
-        plt.figure()
         if len(var) > 10000:
             plt.plot(t[::100], var[::100])
         else:

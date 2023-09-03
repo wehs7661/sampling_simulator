@@ -11,6 +11,7 @@
 This module provide methods to mock the alchemical sampling in EEXE simulations.
 """
 import numpy as np
+from sampling_simulator.utils import utils
 from sampling_simulator.wang_landau_algorithm import WL_Simulator
 
 
@@ -36,15 +37,16 @@ class EnsembleEXE(WL_Simulator):
     def run(self):
         for i in range(self.n_iters):
             section_title = f'Iteration {i+1} / {self.n_iters}'
-            print()
-            print(section_title)
-            print('=' * len(section_title))
-
-            print('Current alchemical weights:')
+            if self.verbose:
+                print()
+                print(section_title)
+                print('=' * len(section_title))
+                print('Current alchemical weights:')
             for j in range(self.n_sim):
                 self.simulators[j].run()
                 self.simulators[j].f_current = self.simulators[j].f_true - self.simulators[j].g
-                print(f'  States {j * self.s} to {j * self.s + self.n_sub - 1}: {np.round(self.simulators[j].g, decimals=3).tolist()}')  # noqa: E501
+                if self.verbose:
+                    print(f'  States {j * self.s} to {j * self.s + self.n_sub - 1}: {np.round(self.simulators[j].g, decimals=3).tolist()}')  # noqa: E501
 
             # Update some attributes
             self.equil_all = [self.simulators[i].equil for i in range(self.n_sim)]
@@ -52,28 +54,39 @@ class EnsembleEXE(WL_Simulator):
             if self.equil_all.count(True) == self.n_sim:
                 print('\nThe alchemical weights have been equilibrated in all replicas!')
                 for j in range(self.n_sim):
-                    print(f'  Equilibration time of states {j * self.s} to {j * self.s + self.n_sub - 1}: {self.equil_time_all[j]} steps')
+                    print(f'  Equilibration time of states {j * self.s} to {j * self.s + self.n_sub - 1}: {self.equil_time_all[j]} steps')  # noqa: E501
                 break
 
             self.wl_delta_all = [self.simulators[i].wl_delta for i in range(self.n_sim)]
-            print(f'\nFinal Wang-Landau incrementors: {np.round(self.wl_delta_all, decimals=6).tolist()}')
+            if self.verbose:
+                print(f'\nFinal Wang-Landau incrementors: {np.round(self.wl_delta_all, decimals=6).tolist()}')
 
             if self.w_combine is True:
-                print('\nPerforming weight combination ...')
+                if self.verbose:
+                    print('\nPerforming weight combination ...')
                 weights_modified, g_vec = self.combine_weights()
                 for j in range(self.n_sim):
                     self.simulators[j].g = weights_modified[j]
                     self.simulators[j].f_current = self.simulators[j].f_true - self.simulators[j].g
-        
-        # Calculate RMSE for the whole-range alchemical weights
+            else:
+                # Calcualte g_vec but do not modify g and f_current
+                _, g_vec = self.combine_weights()
 
+            if self.verbose:
+                print(f'Current profile of alchemical weieghts after combination: {np.round(g_vec, decimals=3).tolist()}')  # noqa: E501
+
+        # Calculate RMSE for the whole-range alchemical weights
+        self.rmse = utils.calc_rmse(g_vec, self.f_true)
+        print(f'\nRMSE of the whole-range alchemical weights: {self.rmse:.3f} kT')
 
     def combine_weights(self):
         weights = [self.simulators[i].g for i in range(self.n_sim)]
         w = np.round(weights, decimals=3).tolist()  # just for printing
-        print('  Original weights:')
+        if self.verbose:
+            print('  Original weights:')
         for i in range(self.n_sim):
-            print(f'      States {i * self.s} to {i * self.s + self.n_sub - 1}: {w[i]}')
+            if self.verbose:
+                print(f'      States {i * self.s} to {i * self.s + self.n_sub - 1}: {w[i]}')
 
         dg_vec = []
         dg_adjacent = [list(np.diff(weights[i])) for i in range(self.n_sim)]
@@ -96,8 +109,10 @@ class EnsembleEXE(WL_Simulator):
                 weights_modified[i] = self.simulators[i].g_equil
 
         w = np.round(weights_modified, decimals=3).tolist()  # just for printing
-        print('\n  Modified weights:')
+        if self.verbose:
+            print('\n  Modified weights:')
         for i in range(len(w)):
-            print(f'      States {i * self.s} to {i * self.s + self.n_sub - 1}: {w[i]}')
+            if self.verbose:
+                print(f'      States {i * self.s} to {i * self.s + self.n_sub - 1}: {w[i]}')
 
         return weights_modified, g_vec
