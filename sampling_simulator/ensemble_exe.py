@@ -59,8 +59,8 @@ class EnsembleEXE(WL_Simulator):
                 break
 
             self.wl_delta_all = [self.simulators[i].wl_delta for i in range(self.n_sim)]
-            # if self.verbose:
-            print(f'\nFinal Wang-Landau incrementors: {np.round(self.wl_delta_all, decimals=6).tolist()}')
+            if self.verbose:
+                print(f'\nFinal Wang-Landau incrementors: {np.round(self.wl_delta_all, decimals=6).tolist()}')
 
             if self.w_combine is True:
                 if self.verbose:
