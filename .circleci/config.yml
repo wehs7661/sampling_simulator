@@ -13,9 +13,7 @@ jobs:
           name: Install nbconvert for testing notebooks
           command: |
             pip install --upgrade pip
-            wget https://github.com/ipython/comm/archive/refs/tags/v0.1.4.tar.gz
-            pip install -v v0.1.4.tar.gz
-            pip install jupyter nbconvert
+            pip install runipy
       - run:
           name: Install the sampling_simulator package
           command: |
@@ -24,8 +22,11 @@ jobs:
           name: Test notebooks
           command: |
             for notebook in *.ipynb; do
-              jupyter nbconvert --to script "$notebook"
-              python "${notebook%.ipynb}.py"
+              runipy "$notebook"
+              if [ $? -ne 0 ]; then
+                echo "Error in $notebook"
+                exit 1
+              fi
             done
 
 workflows:
