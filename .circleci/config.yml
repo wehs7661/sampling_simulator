@@ -22,12 +22,13 @@ jobs:
       - run:
           name: Test notebooks
           command: |
+            # For some reason, I had to same the .py files in the home directory of the project
+            # to be able to run `from sampling_simulator.utils import utils` ...
             for notebook in examples/*.ipynb; do
-              jupyter nbconvert --to notebook --execute --inplace "$notebook"
-              if [ $? -ne 0 ]; then
-                echo "Error in $notebook"
-                exit 1
-              fi
+              base_name=$(basename "$notebook" .ipynb)
+              jupyter nbconvert --to script "$notebook" --output-dir='.'
+              python "${base_name}.py"
+              rm "${base_name}.py"
             done
 
 workflows:
